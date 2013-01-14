@@ -39,4 +39,4 @@ Have fun with weixin, enjoy being a robot!
 
 当然你还可以实现更多自动回复的功能，详细请查看：使用微信公众平台消息接口创建App应用推荐助手
 
-网址：[]http://blog.wpjam.com/project/weixin-robot/
+网址：[http://blog.wpjam.com/project/weixin-robot/](http://blog.wpjam.com/project/weixin-robot/)
