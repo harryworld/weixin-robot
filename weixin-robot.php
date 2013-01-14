@@ -4,7 +4,7 @@
 Plugin Name: 微信机器人
 Plugin URI: http://blog.wpjam.com/project/weixin-robot/
 Description: 微信机器人的主要功能就是能够将你的公众账号和你的 WordPress 博客联系起来，搜索和用户发送信息匹配的日志，并自动回复用户，让你使用微信进行营销事半功倍。
-Version: 0.1
+Version: 0.1.1
 Author: Denis
 */
 
@@ -44,6 +44,11 @@ class wechatCallback
             $this->responseMsg();
             
             exit;
+        } else {
+            // FIXME: Display text if signature is wrong, good for debug
+            // if (isset($_GET['debug'])) {
+                echo 'Error Signature';
+            // }
         }
     }
 
@@ -104,9 +109,9 @@ class wechatCallback
 
         global $wpdb;
 
-        $weixin_posts = $wpdb->get_results("SELECT SQL_CALC_FOUND_ROWS  {$wpdb->posts}.* FROM {$wpdb->posts} WHERE 1=1  AND post_status = 'publish' AND (post_title LIKE '%{$this->keyword}%' OR post_content LIKE '%{$this->keyword}%') GROUP BY ID ORDER BY ((CASE WHEN post_title LIKE '{$this->keyword}' THEN 3 ELSE 0 END) + (CASE WHEN post_title LIKE '%{$this->keyword}%' THEN 2 ELSE 0 END) + (CASE WHEN post_content LIKE '%{$this->keyword}%' THEN 1 ELSE 0 END)) DESC, post_modified DESC, ID ASC LIMIT 0, 5");
-
-        $articleCount = $wpdb->get_var('SELECT FOUND_ROWS()');
+        $q = new WP_Query;
+        // Current maximum number of posts for weixin is 5. True?
+        $weixin_posts = $q->query('s=' . $this->keyword . '&post_count=5');
 
         $items = '';
 
@@ -124,7 +129,7 @@ class wechatCallback
 
 
 
-        $this->articleCount = $articleCount;
+        $this->articleCount = count($weixin_posts);
         if($this->articleCount > 5) $this->articleCount = 5;
 
         $this->items = $items;
